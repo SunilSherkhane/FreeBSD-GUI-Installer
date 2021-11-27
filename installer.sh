@@ -11,10 +11,10 @@ INSTALLGNOME()
 {
             case $1 in
                     [o]*)
-                            pkg install -y falkon konsole nano sddm xorg-minimal dsbdriverd drm-kmod sudo gnome3 gdm xorg xf86-video-intel bash
+                            pkg ins -y falkon terminal nano xorg-minimal dsbdriverd drm-kmod sudo gnome3 gnome-calendar gnome-control-center gnome-backgrounds gnome-tweak-tool xdg-user-dirs gnome-keyring networkmanager gdm xorg xf86-video-intel bash
                     ;;
                     *)
-                            pkg install -y falkon konsole nano sddm xorg-minimal dsbdriverd drm-kmod sudo gnome3 gdm xorg xf86-video-intel bash
+                            pkg ins -y falkon terminal nano xorg-minimal dsbdriverd drm-kmod sudo gnome3 gnome-calendar gnome-control-center gnome-backgrounds gnome-tweak-tool xdg-user-dirs gnome-keyring networkmanager gdm xorg xf86-video-intel bash
                     ;;
             esac
             wait
@@ -25,10 +25,10 @@ INSTALLKDE()
 {
             case $1 in
                     [o]*)
-                            pkg install plasma5-plasma kde-baseapps ark falkon konsole nano sddm xorg-minimal dsbdriverd drm-kmod sudo
+                            pkg ins -y plasma5-plasma kde-baseapps ark falkon plasma5-kde breeze breeze-gtk plasma5-xdg-desktop-portal-kde kdialog plasma-addons plasma5-sddm-kcm kdeconnect-kde kmines ksudoku elisa kf5-kdesu kde-telepathy kdeadmin pam_kde nano sddm xorg-minimal dsbdriverd drm-kmod sudo libsigrokdecode neofetch powerdevil octopkg wine wine-gecko wine-mono winetricks zsh
                     ;;
                     *)
-                            pkg install -y plasma5-plasma kde-baseapps ark falkon konsole nano sddm xorg-minimal dsbdriverd drm-kmod sudo
+                            pkg ins -y plasma5-plasma kde-baseapps ark falkon plasma5-kde breeze breeze-gtk plasma5-xdg-desktop-portal-kde kdialog plasma-addons plasma5-sddm-kcm kdeconnect-kde kmines ksudoku elisa kf5-kdesu kde-telepathy kdeadmin pam_kde nano sddm xorg-minimal dsbdriverd drm-kmod sudo libsigrokdecode neofetch powerdevil octopkg wine wine-gecko wine-mono winetricks zsh
                     ;;
             esac
             wait
