@@ -8,8 +8,6 @@
 # |_|      |_|     \___|  \___| |_____/   \___| |_| |_| |___/  \___|
 #-------------------------------------------------------------------
 
-# I can be contacted on Telegram
-
 if ! [ $(id -u) = 0 ]; then
    echo -e "\n\n****You must run this program as ROOT user****\n\n"
    exit 1
