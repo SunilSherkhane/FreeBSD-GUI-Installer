@@ -170,7 +170,7 @@ desktop=$(dialog --clear --title "Select Desktop" \
 case $desktop in
   KDE)
       gen_xinit "startkde"
-      DESKTOP_PGKS="plasma5-plasma kde-baseapps ark falkon plasma5-xdg-desktop-portal-kde kdialog plasma5-sddm-kcm kdeconnect-kde kmines ksudoku elisa kf5-kdesu kde-telepathy kdeadmin pam_kde nano plasma5-kgamma5 plasma5-khotkeys plasma5-plasma-systemmonitor ${mywm}"
+      DESKTOP_PGKS="plasma5-plasma kde-baseapps ark falkon plasma5-xdg-desktop-portal-kde kdialog plasma5-sddm-kcm kdeconnect-kde kmines ksudoku elisa kf5-kdesu kde-telepathy kdeadmin pam_kde nano plasma5-kgamma5 plasma5-khotkeys plasma5-plasma-systemmonitor automount fusefs-ext2 fusefs-ntfs automount ${mywm}"
       sysrc ${mywm}_enable="YES"
       ;;
   windowmaker)
