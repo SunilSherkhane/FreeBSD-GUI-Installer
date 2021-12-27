@@ -170,9 +170,17 @@ desktop=$(dialog --clear --title "Select Desktop" \
 case $desktop in
   KDE)
       gen_xinit "startkde"
-      DESKTOP_PGKS="plasma5-plasma kde-baseapps ark falkon plasma5-xdg-desktop-portal-kde kdialog plasma5-sddm-kcm kdeconnect-kde kmines ksudoku kf5-kdesu kde-telepathy kdeadmin pam_kde nano plasma5-kgamma5 plasma5-khotkeys plasma5-plasma-systemmonitor automount fusefs-ext2 fusefs-ntfs automount ${mywm}"
+      DESKTOP_PGKS="plasma5-plasma kde-baseapps ark firefox plasma5-xdg-desktop-portal-kde kdialog plasma5-sddm-kcm kdeconnect-kde kf5-kdesu pam_kde nano plasma5-kgamma5 plasma5-khotkeys plasma5-plasma-systemmonitor automount fusefs-ext2 fusefs-ntfs automount ${mywm}"
       sysrc ${mywm}_enable="YES"
-      ;;
+cat > ${release}/usr/local/share/xsessions/xinitrc.desktop << 'EOF'
+[Desktop Entry]
+Encoding=UTF-8
+Type=XSession
+Exec=/usr/local/share/sddm/scripts/xinit-session
+TryExec=/usr/local/share/sddm/scripts/xinit-session
+Name=User Session
+EOF
+   ;;
   windowmaker)
       gen_xinit "/usr/local/bin/wmaker"
       DESKTOP_PGKS="windowmaker wmakerconf ${mywm}" 
