@@ -7,8 +7,8 @@
 # | |      | |    |  __/ |  __/  ____) | |  __/ | | | | \__ \ |  __/
 # |_|      |_|     \___|  \___| |_____/   \___| |_| |_| |___/  \___|
 #-------------------------------------------------------------------
-# Extended multi-DE support: KDE Plasma 6, GNOME, XFCE, MATE
-##
+# Extended multi-DE support: KDE Plasma 6, GNOME, XFCE, MATE, LXQt, Cinnamon, WindowMaker
+#
 
 set -e
 [ "$(id -u)" -eq 0 ] || { echo "Run as root."; exit 1; }
@@ -17,7 +17,6 @@ pkg install -y bsddialog pciutils
 
 # ---------------- GPU detection ----------------
 GPU_VENDOR="$(pciconf -lv | awk '/vgapci/{f=1} f&&/vendor/{print; exit}')"
-
 nvidia=0
 gpu=""
 
@@ -45,12 +44,8 @@ case "$GPU_VENDOR" in
     ;;
 esac
 
-# ---------------- base system ----------------
-pkg install -y xorg dbus seatd sudo ca_root_nss \
-  pipewire wireplumber xdg-utils \
-  firefox vlc unzip zip networkmgr
 
-pkg delete -y elogind || true
+
 sysrc dbus_enable=YES
 sysrc seatd_enable=YES
 
@@ -65,11 +60,16 @@ bsddialog --title "Desktop Environments" \
   mate     "MATE" off \
   cinnamon "Cinnamon" off \
   wm       "WindowMaker" off \
-  2> "$TMP"
+  --separate-output 2> "$TMP"
+
+if [ $? -ne 0 ]; then
+  echo "No desktop selected. Exiting."
+  rm -f "$TMP"
+  exit 0
+fi
 
 DESKTOPS=$(cat "$TMP")
 rm -f "$TMP"
-[ -z "$DESKTOPS" ] && exit 0
 
 # ---------------- install desktops ----------------
 for de in $DESKTOPS; do
@@ -107,6 +107,7 @@ done
 
 # ---------------- xinitrc ----------------
 XINIT=/usr/share/skel/.xinitrc
+> "$XINIT"  # clear existing
 for de in $DESKTOPS; do
   case "$de" in
     kde)       echo 'exec dbus-launch --exit-with-session startplasma-wayland' > "$XINIT" ;;
@@ -136,11 +137,7 @@ for de in $DESKTOPS; do
       echo 'kern.ipc.shm_allow_removed=1' >> /etc/sysctl.conf
       echo 'vm.swap_idle_enabled=1' >> /etc/sysctl.conf
       ;;
-    xfce|lxqt)
-      echo '# Lightweight DE tuning' >> /etc/sysctl.conf
-      echo 'vm.swap_idle_enabled=1' >> /etc/sysctl.conf
-      ;;
-    mate|cinnamon)
+    xfce|lxqt|mate|cinnamon)
       echo "# $de tuning" >> /etc/sysctl.conf
       echo 'vm.swap_idle_enabled=1' >> /etc/sysctl.conf
       ;;
@@ -149,11 +146,6 @@ for de in $DESKTOPS; do
       ;;
   esac
 done
-
-# ==================================================
-# Essentials
-# ==================================================
-pkg install -y firefox vlc xdg-utils networkmgr unzip zip zsh cdrtools bash
 
 # ==================================================
 # LAPTOP POWER OPTIMIZATION
@@ -212,13 +204,12 @@ fi
 # ==================================================
 # USER ACCOUNT CONFIGURATION
 # ==================================================
-# Select users to enable for graphical environment
 users=$(pw usershow -a | awk -F":" '$NF != "/usr/sbin/nologin" && $3 > 999 {print $1 " \""$8"\" off"}' | sort)
 
 exec 5>&1
 USERS=$(echo ${users} | xargs -o bsddialog --backtitle "FreeBSD Installer" \
 	--title "Desktop" --ok-label Add --cancel-label Exit \
-	--checklist 'Select the users enabled for the graphical environment:' 0 0 0 2>&1 1>&5)
+	--checklist 'Select the users enabled for the graphical environment:' 0 0 0 --separate-output 2>&1 1>&5)
 exec 5>&-
 
 [ $? -ne 0 -o -z "$USERS" ] && exit 0
@@ -235,7 +226,18 @@ done
 # ==================================================
 sed -i '' 's/^# \(%wheel ALL=(ALL:ALL) ALL\)/\1/' /usr/local/etc/sudoers
 
-# ---------------- cleanup ----------------
+# ==================================================
+# INSTALL BASE SYSTEM AFTER USER SELECTION
+# ==================================================
+pkg install -y dbus seatd sudo ca_root_nss \
+  pipewire wireplumber xdg-utils \
+  firefox vlc unzip zip networkmgr
+
+sysrc dbus_enable=YES
+sysrc seatd_enable=YES
+# ==================================================
+#  cleanup
+# ==================================================
 pkg autoremove -y
 pkg clean -ay
 
